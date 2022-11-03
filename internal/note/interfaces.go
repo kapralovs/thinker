@@ -1,12 +1,13 @@
-package users
+package note
 
 import "github.com/kapralovs/thinker/internal/models"
 
 type UseCase interface {
-	AddNote(n *models.Note) error
+	CreateNote(n *models.Note) error
 	EditNote(id int64) error
 	DeleteNote(id int64) error
-	ViewNote(id int64) (*models.Note, error)
+	GetNote(id int64) (*models.Note, error)
+	GetNotesList() ([]*models.Note, error)
 }
 
 type Repository interface {
@@ -14,4 +15,5 @@ type Repository interface {
 	EditNote(id int64) error
 	DeleteNote(id int64) error
 	GetNote(id int64) (*models.Note, error)
+	GetNotesList() ([]*models.Note, error)
 }
