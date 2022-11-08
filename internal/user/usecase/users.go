@@ -15,24 +15,47 @@ func NewUserUseCase(r user.Repository) *userUseCase {
 	}
 }
 
-func (uc *userUseCase) AddUser(u *models.User) error {
+func (uc *userUseCase) CreateUser(u *models.User) error {
+	err := uc.repo.CreateUser(u)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func (uc *userUseCase) EditUser(id int64) error {
+func (uc *userUseCase) EditUser(u *models.User) error {
+	err := uc.repo.EditUser(u)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (uc *userUseCase) DeleteUser(id int64) error {
+	err := uc.repo.DeleteUser(id)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (uc *userUseCase) GetUser(id int64) (*models.User, error) {
-	users, err := uc.repo.GetUser()
-	return users, nil
+	note, err := uc.repo.GetUser(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return note, nil
 }
 
-func (uc *userUseCase) GetUsersList(id int64) (*models.User, error) {
-	users, err := uc.repo.GetUser()
+func (uc *userUseCase) GetUsersList() ([]*models.User, error) {
+	users, err := uc.repo.GetUsersList()
+	if err != nil {
+		return nil, err
+	}
+
 	return users, nil
 }

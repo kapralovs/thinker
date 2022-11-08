@@ -5,17 +5,17 @@ import (
 	"github.com/kapralovs/thinker/internal/note"
 )
 
-type NotesUsecase struct {
+type notesUseCase struct {
 	repo note.Repository
 }
 
-func NewNotesUsecase(r note.Repository) *NotesUsecase {
-	return &NotesUsecase{
+func NewNoteUseCase(r note.Repository) *notesUseCase {
+	return &notesUseCase{
 		repo: r,
 	}
 }
 
-func (uc *NotesUsecase) CreateNote(n *models.Note) error {
+func (uc *notesUseCase) CreateNote(n *models.Note) error {
 	err := uc.repo.CreateNote(n)
 	if err != nil {
 		return err
@@ -24,8 +24,8 @@ func (uc *NotesUsecase) CreateNote(n *models.Note) error {
 	return nil
 }
 
-func (uc *NotesUsecase) EditNote(id int64) error {
-	err := uc.repo.EditNote(id)
+func (uc *notesUseCase) EditNote(n *models.Note) error {
+	err := uc.repo.EditNote(n)
 	if err != nil {
 		return err
 	}
@@ -33,7 +33,7 @@ func (uc *NotesUsecase) EditNote(id int64) error {
 	return nil
 }
 
-func (uc *NotesUsecase) DeleteNote(id int64) error {
+func (uc *notesUseCase) DeleteNote(id int64) error {
 	err := uc.repo.DeleteNote(id)
 	if err != nil {
 		return err
@@ -42,11 +42,20 @@ func (uc *NotesUsecase) DeleteNote(id int64) error {
 	return nil
 }
 
-func (uc *NotesUsecase) GetNote(id int64) (*models.Note, error) {
+func (uc *notesUseCase) GetNote(id int64) (*models.Note, error) {
 	note, err := uc.repo.GetNote(id)
 	if err != nil {
 		return nil, err
 	}
 
 	return note, nil
+}
+
+func (uc *notesUseCase) GetNotesList() ([]*models.Note, error) {
+	notes, err := uc.repo.GetNotesList()
+	if err != nil {
+		return nil, err
+	}
+
+	return notes, nil
 }

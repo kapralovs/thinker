@@ -7,8 +7,8 @@ import (
 
 func RegisterEndpoints(router *echo.Echo, uc note.UseCase) {
 	h := NewNoteHandler(uc)
-
-	users := router.Group("/users/")
+	users := router.Group("/notes/")
+	users.GET("", h.Health)
 	users.POST("create", h.CreateNote)
 	users.PUT("edit/:id", h.EditNote)
 	users.DELETE("delete/:id", h.DeleteNote)

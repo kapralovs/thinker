@@ -22,12 +22,27 @@ func NewLocalRepo() *LocalRepo {
 func (r *LocalRepo) CreateNote(n *models.Note) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+
+	_, ok := r.notes[n.ID]
+	if ok {
+		return errors.New("note with such id is already exists")
+	}
+
 	r.notes[n.ID] = n
 
 	return nil
 }
 
-func (r *LocalRepo) EditNote(id int64) error {
+func (r *LocalRepo) EditNote(n *models.Note) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	_, ok := r.notes[n.ID]
+	if !ok {
+		return errors.New("note with such id is not exists")
+	}
+
+	r.notes[n.ID] = n
+
 	return nil
 }
 
@@ -41,6 +56,9 @@ func (r *LocalRepo) DeleteNote(id int64) error {
 }
 
 func (r *LocalRepo) GetNote(id int64) (*models.Note, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
 	if note, ok := r.notes[id]; ok {
 		return note, nil
 	}
