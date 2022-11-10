@@ -121,5 +121,5 @@ func (h *usersHandler) GetUsersList(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, errMsg)
 	}
 
-	return c.JSON(http.StatusOK, serialized)
+	return c.JSON(http.StatusOK, string(serialized))
 }
