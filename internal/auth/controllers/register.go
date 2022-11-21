@@ -7,5 +7,5 @@ import (
 
 func RegisterEndpoints(r echo.Echo, uc auth.Usecase) {
 	h := NewAuthHandler(uc)
-	r.Get.
+	r.POST("/auth/signin")
 }
