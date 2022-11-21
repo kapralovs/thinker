@@ -42,5 +42,9 @@ func (h *AuthHandler) SignIn(c echo.Context) error {
 func (h *AuthHandler) SignUp(c echo.Context) error {
 	tokenInfo := &TokenInfo{}
 	err := c.Bind(tokenInfo)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, "error")
+	}
+
 	return c.JSON(http.StatusCreated, http.StatusText(http.StatusCreated))
 }
