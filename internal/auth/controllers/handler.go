@@ -13,12 +13,12 @@ type AuthHandler struct {
 }
 
 type signInRequestBody struct {
-	username string `json:"username,omitempty"`
-	password string `json:"password,omitempty"`
+	Username string `json:"username,omitempty"`
+	Password string `json:"password,omitempty"`
 }
 
 type signInResponse struct {
-	token string `json:"token,omitempty"`
+	Token string `json:"token,omitempty"`
 }
 
 func NewAuthHandler(uc auth.Usecase) *AuthHandler {
