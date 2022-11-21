@@ -36,7 +36,7 @@ func (h *AuthHandler) SignIn(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, "error")
 	}
 
-	return c.JSON(http.StatusOK, &signInResponse{token: t})
+	return c.JSON(http.StatusOK, &signInResponse{Token: t})
 }
 
 func (h *AuthHandler) SignUp(c echo.Context) error {
