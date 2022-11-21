@@ -8,6 +8,11 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
+type AuthInfo struct {
+	Login    string `json:"login,omitempty"`
+	Password string `json:"password,omitempty"`
+}
+
 type CustomClaimsExample struct {
 	*jwt.StandardClaims
 	TokenType string
