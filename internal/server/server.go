@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -51,6 +52,7 @@ func (a *app) Run(port string) error {
 	}
 
 	go func() {
+		fmt.Println("Server is starting...")
 		if err := a.httpServer.ListenAndServe(); err != nil {
 			log.Fatalf("Failed to listen and serve: %+v", err)
 		}

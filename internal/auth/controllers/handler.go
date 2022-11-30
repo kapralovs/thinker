@@ -17,6 +17,12 @@ type signInRequestBody struct {
 	Password string `json:"password,omitempty"`
 }
 
+type signUpRequestBody struct {
+	Username string `json:"username,omitempty"`
+	Password string `json:"password,omitempty"`
+	Name     string `json:"name,omitempty"`
+}
+
 type signInResponse struct {
 	Token string `json:"token,omitempty"`
 }
@@ -40,11 +46,13 @@ func (h *AuthHandler) SignIn(c echo.Context) error {
 }
 
 func (h *AuthHandler) SignUp(c echo.Context) error {
-	tokenInfo := &TokenInfo{}
-	err := c.Bind(tokenInfo)
+	signUpInfo := &signUpRequestBody{}
+	err := c.Bind(signUpInfo)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, "error")
 	}
+
+	//TODO: закончить авторизацию
 
 	return c.JSON(http.StatusCreated, http.StatusText(http.StatusCreated))
 }
