@@ -7,7 +7,7 @@ type Repository interface {
 	CreateUser(user *models.User) error
 }
 
-type Usecase interface {
+type UseCase interface {
 	SignIn(username, password string) (string, error)
-	SignUp(user, password string) error
+	SignUp(username, password string) error
 }

@@ -2,14 +2,13 @@ package controllers
 
 import (
 	"net/http"
-	"os"
 
 	"github.com/kapralovs/thinker/internal/auth"
 	"github.com/labstack/echo/v4"
 )
 
 type AuthHandler struct {
-	usecase auth.Usecase
+	usecase auth.UseCase
 }
 
 type signInRequestBody struct {
@@ -27,32 +26,36 @@ type signInResponse struct {
 	Token string `json:"token,omitempty"`
 }
 
-func NewAuthHandler(uc auth.Usecase) *AuthHandler {
+func NewAuthHandler(uc auth.UseCase) *AuthHandler {
 	return &AuthHandler{usecase: uc}
 }
 
 func (h *AuthHandler) SignIn(c echo.Context) error {
+	a := new(AuthInfo)
+	err := c.Bind(a)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, "error")
+	}
+
+	token, err := h.usecase.SignIn(a.Login, a.Password)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, "can't sign in")
+	}
+
+	return c.JSON(http.StatusOK, token)
+}
+
+func (h *AuthHandler) SignUp(c echo.Context) error {
 	a := &AuthInfo{}
 	err := c.Bind(a)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, "error")
 	}
-	t, err := generateToken(a, os.Getenv("SIGN_STRING"))
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, "error")
+
+	if err = h.usecase.SignUp(a.Login, a.Password); err != nil {
+		return c.JSON(http.StatusInternalServerError, "can't sign in")
 	}
-
-	return c.JSON(http.StatusOK, &signInResponse{Token: t})
-}
-
-func (h *AuthHandler) SignUp(c echo.Context) error {
-	signUpInfo := &signUpRequestBody{}
-	err := c.Bind(signUpInfo)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, "error")
-	}
-
 	//TODO: закончить авторизацию
 
-	return c.JSON(http.StatusCreated, http.StatusText(http.StatusCreated))
+	return c.JSON(http.StatusCreated, "created")
 }

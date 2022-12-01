@@ -9,37 +9,37 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/kapralovs/thinker/internal/auth"
+	authhttp "github.com/kapralovs/thinker/internal/auth/controllers"
+	authRepo "github.com/kapralovs/thinker/internal/auth/repository/localcache"
+	authUC "github.com/kapralovs/thinker/internal/auth/usecase"
 	"github.com/kapralovs/thinker/internal/note"
 	notehttp "github.com/kapralovs/thinker/internal/note/controllers"
 	noteRepo "github.com/kapralovs/thinker/internal/note/repository/localcache"
 	noteUC "github.com/kapralovs/thinker/internal/note/usecase"
-	"github.com/kapralovs/thinker/internal/user"
-	userhttp "github.com/kapralovs/thinker/internal/user/controllers"
-	userRepo "github.com/kapralovs/thinker/internal/user/repository/localcache"
-	userUC "github.com/kapralovs/thinker/internal/user/usecase"
 	"github.com/labstack/echo/v4"
 )
 
 type app struct {
 	httpServer  *http.Server
 	noteUseCase note.UseCase
-	userUseCase user.UseCase
+	authUseCase auth.UseCase
 }
 
 func NewApp() *app {
 	nRepo := noteRepo.NewLocalRepo()
-	uRepo := userRepo.NewLocalRepo()
+	authRepo := authRepo.NewLocalRepo()
 
 	return &app{
 		noteUseCase: noteUC.NewNoteUseCase(nRepo),
-		userUseCase: userUC.NewUserUseCase(uRepo),
+		authUseCase: authUC.NewAuthUseCase(authRepo),
 	}
 }
 
 func (a *app) Run(port string) error {
 	router := echo.New()
 
-	userhttp.RegisterHTTPEndpoints(router, a.userUseCase)
+	authhttp.RegisterEndpoints(router, a.authUseCase)
 	notehttp.RegisterEndpoints(router, a.noteUseCase)
 
 	// HTTP Server
