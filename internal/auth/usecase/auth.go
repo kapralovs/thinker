@@ -51,22 +51,34 @@ func (uc *authUseCase) SignIn(username, password string) (string, error) {
 
 	token, err := generateToken(claims, os.Getenv("SIGN_STRING"))
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 
 	return token, nil
 }
 
-func (uc *authUseCase) SignUp(username, password string) error {
+func (uc *authUseCase) SignUp(username, password string) (string, error) {
 	u := &models.User{Username: username, Password: password}
 	if err := uc.repo.CreateUser(u); err != nil {
-		return fmt.Errorf("%s: %s", "can't create user", err.Error())
+		return "", fmt.Errorf("%s: %s", "can't create user", err.Error())
 	}
 
-	return nil
+	claims := &AuthClaims{
+		User: u,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: int64(time.Hour),
+		},
+	}
+
+	token, err := generateToken(claims, os.Getenv("SIGN_STRING"))
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }
 
-func parseToken(tokenString string) error {
+func ParseToken(tokenString string) error {
 	token, err := jwt.ParseWithClaims(tokenString, &AuthClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("SIGN_STRING")), nil
 	})

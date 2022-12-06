@@ -9,5 +9,5 @@ type Repository interface {
 
 type UseCase interface {
 	SignIn(username, password string) (string, error)
-	SignUp(username, password string) error
+	SignUp(username, password string) (string, error)
 }

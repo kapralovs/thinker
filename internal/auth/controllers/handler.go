@@ -22,8 +22,9 @@ type signUpRequestBody struct {
 	Name     string `json:"name,omitempty"`
 }
 
-type signInResponse struct {
-	Token string `json:"token,omitempty"`
+type AuthResponse struct {
+	Token   string `json:"access_token,omitempty"`
+	Success bool   `json:"success,omitempty"`
 }
 
 func NewAuthHandler(uc auth.UseCase) *AuthHandler {
@@ -42,20 +43,24 @@ func (h *AuthHandler) SignIn(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, "can't sign in")
 	}
 
-	return c.JSON(http.StatusOK, token)
+	ar := &AuthResponse{Token: token, Success: true}
+
+	return c.JSON(http.StatusOK, ar)
 }
 
 func (h *AuthHandler) SignUp(c echo.Context) error {
-	a := &AuthInfo{}
-	err := c.Bind(a)
+	s := new(signUpRequestBody)
+	err := c.Bind(s)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, "error")
 	}
 
-	if err = h.usecase.SignUp(a.Login, a.Password); err != nil {
-		return c.JSON(http.StatusInternalServerError, "can't sign in")
+	token, err := h.usecase.SignUp(s.Username, s.Password)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, "sign up error")
 	}
-	//TODO: закончить авторизацию
 
-	return c.JSON(http.StatusCreated, "created")
+	ar := &AuthResponse{Token: token, Success: true}
+
+	return c.JSON(http.StatusCreated, ar)
 }

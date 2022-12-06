@@ -9,13 +9,13 @@ import (
 
 type LocalRepo struct {
 	mu    *sync.Mutex
-	users map[string]*models.User
+	users map[int64]*models.User
 }
 
 func NewLocalRepo() *LocalRepo {
 	return &LocalRepo{
 		mu:    new(sync.Mutex),
-		users: make(map[string]*models.User),
+		users: make(map[int64]*models.User),
 	}
 }
 
@@ -23,12 +23,14 @@ func (r *LocalRepo) CreateUser(u *models.User) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	_, ok := r.users[u.Username]
-	if ok {
-		return errors.New("note with such id is already exists")
+	for _, user := range r.users {
+		if u.Username == user.Username {
+			return errors.New("user with such username is already exists")
+		}
 	}
 
-	r.users[u.Username] = &models.User{Username: u.Username, Password: u.Username}
+	u.ID = int64(len(r.users) + 1)
+	r.users[u.ID] = u
 
 	return nil
 }
@@ -36,34 +38,30 @@ func (r *LocalRepo) CreateUser(u *models.User) error {
 func (r *LocalRepo) EditUser(u *models.User) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	_, ok := r.users[u.Username]
+
+	_, ok := r.users[u.ID]
 	if !ok {
 		return errors.New("note with such id is not exists")
 	}
 
-	r.users[u.Username] = u
+	r.users[u.ID] = u
 
 	return nil
 }
-
-// func (r *LocalRepo) DeleteUser(id int64) error {
-// 	r.mu.Lock()
-// 	defer r.mu.Unlock()
-
-// 	delete(r.users, u.Username)
-
-// 	return nil
-// }
 
 func (r *LocalRepo) GetUser(username, password string) (*models.User, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	if user, ok := r.users[username]; ok {
-		return user, nil
+	for _, user := range r.users {
+		if user.Username == username {
+			if user.Password == password {
+				return user, nil
+			}
+		}
 	}
 
-	return nil, errors.New("заметка с данным ID не найдена")
+	return nil, errors.New("пользователь с данным ID не найден")
 }
 
 func (r *LocalRepo) GetUsersList() ([]*models.User, error) {
