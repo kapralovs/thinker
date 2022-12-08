@@ -1,2 +1,3 @@
-curl localhost:8080/notes/list \
--H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjM2MDAwMDAwMDAwMDAsInVzZXIiOnsiaWQiOjEsInBhc3N3b3JkIjoicGFzcyJ9fQ.UifMZZiXEuFGvgnIE0_wvD5_DWwCI-v2r3ZgloukInY'
+curl -v localhost:8080/note/list \
+-H 'Content-Type: application/json' \
+-H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjM2MDAwMDAwMDAwMDAsInVzZXIiOnsiaWQiOjEsInVzZXJuYW1lIjoidXNlcjEiLCJwYXNzd29yZCI6InBhc3MifX0.CFZGeql-Adb6SvUmZ3AKTSdoKEK5e74TLeV2Aina85w'

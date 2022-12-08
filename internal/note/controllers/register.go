@@ -5,13 +5,11 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func RegisterEndpoints(router *echo.Echo, uc note.UseCase) {
+func RegisterEndpoints(note *echo.Group, uc note.UseCase) {
 	h := NewNoteHandler(uc)
-	users := router.Group("/notes/")
-	users.GET("", h.Health)
-	users.POST("create", h.CreateNote)
-	users.PUT("edit/:id", h.EditNote)
-	users.DELETE("delete/:id", h.DeleteNote)
-	users.GET("get/:id", h.GetNote)
-	users.GET("list", h.GetNotesList)
+	note.POST("create", h.CreateNote)
+	note.PUT("edit/:id", h.EditNote)
+	note.DELETE("delete/:id", h.DeleteNote)
+	note.GET("get/:id", h.GetNote)
+	note.GET("list", h.GetNotesList)
 }

@@ -38,10 +38,10 @@ func NewApp() *app {
 
 func (a *app) Run(port string) error {
 	router := echo.New()
-	// router.Use(authhttp.AuthMiddleware)
-
-	authhttp.RegisterEndpoints(router, a.authUseCase)
-	notehttp.RegisterEndpoints(router, a.noteUseCase)
+	authGroup := router.Group("/auth/")
+	noteGroup := router.Group("/note/", authhttp.NewAuthMiddlewareHandler(a.authUseCase))
+	authhttp.RegisterEndpoints(authGroup, a.authUseCase)
+	notehttp.RegisterEndpoints(noteGroup, a.noteUseCase)
 
 	// HTTP Server
 	a.httpServer = &http.Server{

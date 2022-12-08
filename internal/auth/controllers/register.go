@@ -5,8 +5,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func RegisterEndpoints(r *echo.Echo, uc auth.UseCase) {
+func RegisterEndpoints(auth *echo.Group, uc auth.UseCase) {
 	h := NewAuthHandler(uc)
-	r.POST("/auth/sign_in", h.SignIn)
-	r.POST("/auth/sign_up", h.SignUp)
+	auth.POST("sign_in", h.SignIn)
+	auth.POST("sign_up", h.SignUp)
 }

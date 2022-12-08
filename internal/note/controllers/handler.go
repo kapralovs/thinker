@@ -123,7 +123,3 @@ func (h *notesHandler) GetNotesList(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, string(serialized))
 }
-
-func (h *notesHandler) Health(c echo.Context) error {
-	return c.JSON(http.StatusOK, "online")
-}

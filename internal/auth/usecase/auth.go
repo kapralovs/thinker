@@ -78,7 +78,7 @@ func (uc *authUseCase) SignUp(username, password string) (string, error) {
 	return token, nil
 }
 
-func ParseToken(tokenString string) error {
+func (uc *authUseCase) ParseToken(tokenString string) error {
 	token, err := jwt.ParseWithClaims(tokenString, &AuthClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("SIGN_STRING")), nil
 	})
