@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"time"
@@ -45,7 +46,7 @@ func (uc *authUseCase) SignIn(username, password string) (string, error) {
 	claims := &AuthClaims{
 		User: u,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: int64(time.Hour),
+			ExpiresAt: int64(time.Minute),
 		},
 	}
 
@@ -79,14 +80,23 @@ func (uc *authUseCase) SignUp(username, password string) (string, error) {
 }
 
 func (uc *authUseCase) ParseToken(tokenString string) error {
-	token, err := jwt.ParseWithClaims(tokenString, &AuthClaims{}, func(token *jwt.Token) (interface{}, error) {
+	tokenInfo, err := jwt.ParseWithClaims(tokenString, &AuthClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("SIGN_STRING")), nil
 	})
-	if claims, ok := token.Claims.(*AuthClaims); ok && token.Valid {
+	if err != nil {
+		return err
+	}
+	if claims, ok := tokenInfo.Claims.(*AuthClaims); ok && tokenInfo.Valid {
 		fmt.Printf("%v %v\n", claims.User.Username, claims.ExpiresAt)
 		fmt.Printf("%v %v\n", claims.User.Password, claims.ExpiresAt)
-	} else {
-		return err
+		u, err := uc.repo.GetUser(claims.User.Username, claims.User.Password)
+		if err != nil {
+			return err
+		}
+
+		if u.CurrentToken != tokenString {
+			return errors.New("the token is expired")
+		}
 	}
 
 	return nil

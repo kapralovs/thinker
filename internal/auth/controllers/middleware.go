@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/kapralovs/thinker/internal/auth"
@@ -24,7 +23,7 @@ func (a *AuthMiddlewareHandler) AuthMiddleware(next echo.HandlerFunc) echo.Handl
 		}
 
 		token := authHeaderVal[len("Bearer "):]
-		fmt.Printf("Token: %s\n", token)
+		// fmt.Printf("Token: %s\n", token)
 
 		err := a.usecase.ParseToken(token)
 		if err != nil {
