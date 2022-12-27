@@ -10,11 +10,11 @@ import (
 	"time"
 
 	"github.com/kapralovs/thinker/internal/auth"
-	authhttp "github.com/kapralovs/thinker/internal/auth/controllers"
+	authhttp "github.com/kapralovs/thinker/internal/auth/controllers/http"
 	authRepo "github.com/kapralovs/thinker/internal/auth/repository/localcache"
 	authUC "github.com/kapralovs/thinker/internal/auth/usecase"
 	"github.com/kapralovs/thinker/internal/note"
-	notehttp "github.com/kapralovs/thinker/internal/note/controllers"
+	notehttp "github.com/kapralovs/thinker/internal/note/controllers/http"
 	noteRepo "github.com/kapralovs/thinker/internal/note/repository/localcache"
 	noteUC "github.com/kapralovs/thinker/internal/note/usecase"
 	"github.com/labstack/echo/v4"
