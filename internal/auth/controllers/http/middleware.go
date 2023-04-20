@@ -24,8 +24,9 @@ func (a *AuthMiddlewareHandler) AuthMiddleware(next echo.HandlerFunc) echo.Handl
 
 		token := authHeaderVal[len("Bearer "):]
 
+
 		if err := a.usecase.ParseToken(token); err != nil {
-			return c.JSON(http.StatusBadRequest, "auth failed!")
+			return c.JSON(http.StatusUnauthorized, "auth failed!")
 		}
 
 		return next(c)
