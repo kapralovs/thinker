@@ -40,6 +40,7 @@ func (a *app) Run(port string) error {
 
 	authGroup := router.Group("/auth/")
 	noteGroup := router.Group("/note/", authhttp.NewAuthMiddlewareHandler(a.authUseCase))
+
 	authhttp.RegisterEndpoints(authGroup, a.authUseCase)
 	notehttp.RegisterEndpoints(noteGroup, a.noteUseCase)
 
