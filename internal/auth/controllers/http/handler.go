@@ -7,60 +7,62 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type AuthHandler struct {
-	usecase auth.UseCase
-}
+type (
+	AuthHandler struct {
+		usecase auth.UseCase
+	}
 
-type signInRequestBody struct {
-	Username string `json:"username,omitempty"`
-	Password string `json:"password,omitempty"`
-}
+	signInRequestBody struct {
+		Username string `json:"username,omitempty"`
+		Password string `json:"password,omitempty"`
+	}
 
-type signUpRequestBody struct {
-	Username string `json:"username,omitempty"`
-	Password string `json:"password,omitempty"`
-	Name     string `json:"name,omitempty"`
-}
+	signUpRequestBody struct {
+		Username string `json:"username,omitempty"`
+		Password string `json:"password,omitempty"`
+		Name     string `json:"name,omitempty"`
+	}
 
-type AuthResponse struct {
-	Token   string `json:"access_token,omitempty"`
-	Success bool   `json:"success,omitempty"`
-}
+	AuthResponse struct {
+		Token   string `json:"access_token,omitempty"`
+		Success bool   `json:"success,omitempty"`
+	}
+)
 
 func NewAuthHandler(uc auth.UseCase) *AuthHandler {
 	return &AuthHandler{usecase: uc}
 }
 
 func (h *AuthHandler) SignIn(c echo.Context) error {
-	a := new(AuthInfo)
-	err := c.Bind(a)
-	if err != nil {
+	authInfo := new(AuthInfo)
+
+	if err := c.Bind(authInfo); err != nil {
 		return c.JSON(http.StatusBadRequest, "error")
 	}
 
-	token, err := h.usecase.SignIn(a.Login, a.Password)
+	token, err := h.usecase.SignIn(authInfo.Login, authInfo.Password)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, "can't sign in")
 	}
 
-	ar := &AuthResponse{Token: token, Success: true}
+	authResp := &AuthResponse{Token: token, Success: true}
 
-	return c.JSON(http.StatusOK, ar)
+	return c.JSON(http.StatusOK, authResp)
 }
 
 func (h *AuthHandler) SignUp(c echo.Context) error {
-	s := new(signUpRequestBody)
-	err := c.Bind(s)
-	if err != nil {
+	signUpReq := new(signUpRequestBody)
+
+	if err := c.Bind(signUpReq); err != nil {
 		return c.JSON(http.StatusBadRequest, "error")
 	}
 
-	token, err := h.usecase.SignUp(s.Username, s.Password)
+	token, err := h.usecase.SignUp(signUpReq.Username, signUpReq.Password)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, "sign up error")
 	}
 
-	ar := &AuthResponse{Token: token, Success: true}
+	authResp := &AuthResponse{Token: token, Success: true}
 
-	return c.JSON(http.StatusCreated, ar)
+	return c.JSON(http.StatusCreated, authResp)
 }

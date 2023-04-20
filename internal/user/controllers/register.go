@@ -7,6 +7,7 @@ import (
 
 func RegisterEndpoints(r *echo.Echo, uc user.UseCase) {
 	h := NewUserHandler(uc)
+
 	user := r.Group("/user")
 	user.GET("/get", h.GetUser)
 	user.GET("/get_list", h.GetUsersList)

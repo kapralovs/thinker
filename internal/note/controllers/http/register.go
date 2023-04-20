@@ -7,6 +7,7 @@ import (
 
 func RegisterEndpoints(note *echo.Group, uc note.UseCase) {
 	h := NewNoteHandler(uc)
+
 	note.POST("create", h.CreateNote)
 	note.PUT("edit/:id", h.EditNote)
 	note.DELETE("delete/:id", h.DeleteNote)

@@ -15,27 +15,24 @@ func NewNoteUseCase(r note.Repository) *notesUseCase {
 	}
 }
 
-func (uc *notesUseCase) CreateNote(n *models.Note) error {
-	err := uc.repo.CreateNote(n)
-	if err != nil {
+func (uc *notesUseCase) CreateNote(n *models.Note) (err error) {
+	if err := uc.repo.CreateNote(n); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (uc *notesUseCase) EditNote(n *models.Note) error {
-	err := uc.repo.EditNote(n)
-	if err != nil {
+func (uc *notesUseCase) EditNote(n *models.Note) (err error) {
+	if err := uc.repo.EditNote(n); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (uc *notesUseCase) DeleteNote(id int64) error {
-	err := uc.repo.DeleteNote(id)
-	if err != nil {
+func (uc *notesUseCase) DeleteNote(id int64) (err error) {
+	if err := uc.repo.DeleteNote(id); err != nil {
 		return err
 	}
 

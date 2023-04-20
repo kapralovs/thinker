@@ -43,15 +43,14 @@ func (h *UserHandler) GetUsersList(c echo.Context) error {
 	return c.JSON(http.StatusOK, users)
 }
 
-func (h *UserHandler) EditUser(c echo.Context) error {
+func (h *UserHandler) EditUser(c echo.Context) (err error) {
 	u := new(models.User)
-	err := c.Bind(u)
-	if err != nil {
+
+	if err = c.Bind(u); err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("can't get user: %s", err.Error()))
 	}
 
-	err = h.usecase.EditUser(u)
-	if err != nil {
+	if err = h.usecase.EditUser(u); err != nil {
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("can't edit user: %s", err.Error()))
 	}
 
