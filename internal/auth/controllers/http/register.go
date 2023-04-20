@@ -6,7 +6,8 @@ import (
 )
 
 func RegisterEndpoints(auth *echo.Group, uc auth.UseCase) {
-	h := NewAuthHandler(uc)
-	auth.POST("sign_in", h.SignIn)
-	auth.POST("sign_up", h.SignUp)
+	handler := NewAuthHandler(uc)
+
+	auth.POST("sign_in", handler.SignIn)
+	auth.POST("sign_up", handler.SignUp)
 }

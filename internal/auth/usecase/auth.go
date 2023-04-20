@@ -11,26 +11,22 @@ import (
 	"github.com/kapralovs/thinker/internal/models"
 )
 
-type authUseCase struct {
-	repo auth.Repository
-}
+type (
+	authUseCase struct {
+		repo auth.Repository
+	}
 
-type AuthClaims struct {
-	jwt.StandardClaims
-	User *models.User `json:"user"`
-}
+	AuthClaims struct {
+		jwt.StandardClaims
+		User *models.User `json:"user"`
+	}
+)
 
 func NewAuthUseCase(r auth.Repository) *authUseCase {
 	return &authUseCase{
 		repo: r,
 	}
 }
-
-// type CustomClaimsExample struct {
-// 	*jwt.StandardClaims
-// 	TokenType string
-// 	User
-// }
 
 func generateToken(a *AuthClaims, sString string) (string, error) {
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, a)
@@ -60,6 +56,7 @@ func (uc *authUseCase) SignIn(username, password string) (string, error) {
 
 func (uc *authUseCase) SignUp(username, password string) (string, error) {
 	u := &models.User{Username: username, Password: password}
+
 	if err := uc.repo.CreateUser(u); err != nil {
 		return "", fmt.Errorf("%s: %s", "can't create user", err.Error())
 	}
@@ -86,9 +83,11 @@ func (uc *authUseCase) ParseToken(tokenString string) error {
 	if err != nil {
 		return err
 	}
+
 	if claims, ok := tokenInfo.Claims.(*AuthClaims); ok && tokenInfo.Valid {
-		fmt.Printf("%v %v\n", claims.User.Username, claims.ExpiresAt)
-		fmt.Printf("%v %v\n", claims.User.Password, claims.ExpiresAt)
+		// fmt.Printf("%v %v\n", claims.User.Username, claims.ExpiresAt)
+		// fmt.Printf("%v %v\n", claims.User.Password, claims.ExpiresAt)
+
 		u, err := uc.repo.GetUser(claims.User.Username, claims.User.Password)
 		if err != nil {
 			return err

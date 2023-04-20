@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -38,8 +37,10 @@ func NewApp() *app {
 
 func (a *app) Run(port string) error {
 	router := echo.New()
+
 	authGroup := router.Group("/auth/")
 	noteGroup := router.Group("/note/", authhttp.NewAuthMiddlewareHandler(a.authUseCase))
+
 	authhttp.RegisterEndpoints(authGroup, a.authUseCase)
 	notehttp.RegisterEndpoints(noteGroup, a.noteUseCase)
 
@@ -53,7 +54,7 @@ func (a *app) Run(port string) error {
 	}
 
 	go func() {
-		fmt.Println("Server is starting...")
+		log.Println("Server is starting...")
 		if err := a.httpServer.ListenAndServe(); err != nil {
 			log.Fatalf("Failed to listen and serve: %+v", err)
 		}

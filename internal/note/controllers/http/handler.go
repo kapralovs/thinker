@@ -26,15 +26,14 @@ func NewNoteHandler(uc note.UseCase) *notesHandler {
 	}
 }
 
-func (h *notesHandler) CreateNote(c echo.Context) error {
+func (h *notesHandler) CreateNote(c echo.Context) (err error) {
 	n := new(models.Note)
-	err := c.Bind(n)
-	if err != nil {
+
+	if err = c.Bind(n); err != nil {
 		c.JSON(http.StatusBadRequest, "bad request")
 	}
 
-	err = h.usecase.CreateNote(n)
-	if err != nil {
+	if err = h.usecase.CreateNote(n); err != nil {
 		errMsg := fmt.Sprintf("%s: failed to create a new note: %s", utils.ResponseStatusError, err.Error())
 		return c.JSON(http.StatusInternalServerError, errMsg)
 	}
@@ -49,8 +48,7 @@ func (h *notesHandler) EditNote(c echo.Context) error {
 		c.JSON(http.StatusBadRequest, "bad request")
 	}
 
-	err = h.usecase.EditNote(n)
-	if err != nil {
+	if err = h.usecase.EditNote(n); err != nil {
 		errMsg := fmt.Sprintf("%s: failed to edit note: %s", utils.ResponseStatusError, err.Error())
 		return c.JSON(http.StatusInternalServerError, errMsg)
 	}
@@ -60,6 +58,7 @@ func (h *notesHandler) EditNote(c echo.Context) error {
 
 func (h *notesHandler) DeleteNote(c echo.Context) error {
 	strID := c.Param(":id")
+
 	if strID == "" {
 		errMsg := fmt.Sprintf("%s: empty path param: %s", utils.ResponseStatusError, "id")
 		return c.JSON(http.StatusBadRequest, errMsg)
@@ -71,8 +70,7 @@ func (h *notesHandler) DeleteNote(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, errMsg)
 	}
 
-	err = h.usecase.DeleteNote(int64(id))
-	if err != nil {
+	if err = h.usecase.DeleteNote(int64(id)); err != nil {
 		errMsg := fmt.Sprintf("%s: failed to delete a note: %s", utils.ResponseStatusError, err.Error())
 		return c.JSON(http.StatusBadRequest, errMsg)
 	}
