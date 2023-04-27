@@ -39,6 +39,7 @@ func (uc *authUseCase) SignIn(username, password string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	claims := &AuthClaims{
 		User: u,
 		StandardClaims: jwt.StandardClaims{
@@ -55,11 +56,7 @@ func (uc *authUseCase) SignIn(username, password string) (string, error) {
 }
 
 func (uc *authUseCase) SignUp(username, password string) (string, error) {
-	u := &models.User{Username: username, Password: password}
-
-	if err := uc.repo.CreateUser(u); err != nil {
-		return "", fmt.Errorf("%s: %s", "can't create user", err.Error())
-	}
+	var u = &models.User{Username: username, Password: password}
 
 	claims := &AuthClaims{
 		User: u,
@@ -71,6 +68,12 @@ func (uc *authUseCase) SignUp(username, password string) (string, error) {
 	token, err := generateToken(claims, os.Getenv("SIGN_STRING"))
 	if err != nil {
 		return "", err
+	}
+
+	u.CurrentToken = token
+
+	if err := uc.repo.CreateUser(u); err != nil {
+		return "", fmt.Errorf("%s: %s", "can't create user", err.Error())
 	}
 
 	return token, nil
@@ -94,6 +97,7 @@ func (uc *authUseCase) ParseToken(tokenString string) error {
 		}
 
 		if u.CurrentToken != tokenString {
+			// fmt.Printf("u.CurrentToken: %s\ntokenString: %s\n", u.CurrentToken, tokenString)
 			return errors.New("the token is expired")
 		}
 	}
