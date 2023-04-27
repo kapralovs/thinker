@@ -79,7 +79,8 @@ func (h *notesHandler) DeleteNote(c echo.Context) error {
 }
 
 func (h *notesHandler) GetNote(c echo.Context) error {
-	strID := c.Param(":id")
+	fmt.Println(c.ParamValues())
+	strID := c.Param("id")
 	if strID == "" {
 		errMsg := fmt.Sprintf("%s: empty path param: %s", utils.ResponseStatusError, "id")
 		return c.JSON(http.StatusBadRequest, errMsg)

@@ -11,6 +11,6 @@ func RegisterEndpoints(note *echo.Group, uc note.UseCase) {
 	note.POST("create", h.CreateNote)
 	note.PUT("edit/:id", h.EditNote)
 	note.DELETE("delete/:id", h.DeleteNote)
-	note.GET("get/:id", h.GetNote)
+	note.GET(":id", h.GetNote)
 	note.GET("list", h.GetNotesList)
 }
