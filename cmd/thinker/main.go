@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/kapralovs/thinker/internal/server"
+	server "github.com/kapralovs/thinker/internal/app"
 )
 
 func main() {
