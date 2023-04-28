@@ -23,6 +23,7 @@ func (r *LocalRepo) CreateNote(n *models.Note) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
+	n.ID = int64(len(r.notes) + 1)
 	_, ok := r.notes[n.ID]
 	if ok {
 		return errors.New("note with such id is already exists")
