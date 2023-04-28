@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/kapralovs/thinker/internal/auth"
@@ -26,7 +26,7 @@ func (a *AuthMiddlewareHandler) AuthMiddleware(next echo.HandlerFunc) echo.Handl
 		token := authHeaderVal[len("Bearer "):]
 
 		if err := a.usecase.ParseToken(token); err != nil {
-			fmt.Println(err.Error())
+			log.Println(err.Error())
 			return c.JSON(http.StatusUnauthorized, "auth failed!")
 		}
 
