@@ -44,7 +44,7 @@ func (h *UserHandler) GetUsersList(c echo.Context) error {
 }
 
 func (h *UserHandler) EditUser(c echo.Context) (err error) {
-	u := new(models.User)
+	var u = new(models.User)
 
 	if err = c.Bind(u); err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("can't get user: %s", err.Error()))
