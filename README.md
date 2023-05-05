@@ -1,2 +1,2 @@
-# thinker
+# Thinker
 Application for notes
