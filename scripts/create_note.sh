@@ -6,5 +6,5 @@ curl -X POST localhost:8080/note/create \
     "user_id":1,
     "title":"Some test title",
     "text":"HELLo, world!!!",
-    "tags":["test","hello_world"]
+    "tags":["hello_world"]
 }'
