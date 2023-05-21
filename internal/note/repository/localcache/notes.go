@@ -72,26 +72,44 @@ func (r *LocalRepo) GetNotesList(filters map[string][]string) ([]*models.Note, e
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	notesList := make([]*models.Note, 0, len(r.notes))
+	notesList := make([]*models.Note, 0)
 	for _, note := range r.notes {
-		for fName, fValues := range filters {
-			switch fName {
-			case "tags":
-				for _, tag := range fValues {
-					for idx, val := range note.Tags {
-						if val == tag {
-							break
-						}
-
-						if idx == len(note.Tags) {
-							return nil, fmt.Errorf("tag %s is not exist for this note (id=%d)", tag, note.ID)
-						}
-					}
-				}
+		if len(filters) > 0 {
+			if applyFilters(filters, note) {
+				notesList = append(notesList, note)
 			}
+
+			continue
 		}
+
 		notesList = append(notesList, note)
 	}
 
 	return notesList, nil
+}
+
+func applyFilters(filters map[string][]string, note *models.Note) bool {
+	for fName, fValues := range filters {
+		switch fName {
+		case "tags":
+			for _, required := range fValues {
+				fmt.Println(required)
+				if !checkTag(required, note.Tags) {
+					return false
+				}
+			}
+		}
+	}
+
+	return true
+}
+
+func checkTag(required string, tags []string) bool {
+	for _, tag := range tags {
+		if tag == required {
+			return true
+		}
+	}
+
+	return false
 }
