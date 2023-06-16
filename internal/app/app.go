@@ -36,11 +36,14 @@ func NewApp() *app {
 }
 
 func (a *app) Run(port string) error {
+	// Initialize router instance
 	router := echo.New()
 
+	// Set router groups
 	authGroup := router.Group("/auth/")
 	noteGroup := router.Group("/note/", authhttp.NewAuthMiddlewareHandler(a.authUseCase))
 
+	// RegisterEndpoints
 	authhttp.RegisterEndpoints(authGroup, a.authUseCase)
 	notehttp.RegisterEndpoints(noteGroup, a.noteUseCase)
 
@@ -53,6 +56,7 @@ func (a *app) Run(port string) error {
 		MaxHeaderBytes: 1 << 20,
 	}
 
+	// Launch HTTP server into separate goroutine
 	go func() {
 		log.Println("Server is starting...")
 		if err := a.httpServer.ListenAndServe(); err != nil {
@@ -60,11 +64,16 @@ func (a *app) Run(port string) error {
 		}
 	}()
 
+	// Make channel of os.Signals with cap=1
 	quit := make(chan os.Signal, 1)
+
+	// Handle os.Interrupt
 	signal.Notify(quit, os.Interrupt, os.Interrupt)
 
+	// Locked until the first element (signal) is passed to the channel
 	<-quit
 
+	// Added a context with timeout for passing it to the a.httpServer.Shutdown(ctx)
 	ctx, shutdown := context.WithTimeout(context.Background(), 5*time.Second)
 	defer shutdown()
 
