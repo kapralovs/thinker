@@ -100,9 +100,8 @@ func (h *notesHandler) GetNote(c echo.Context) error {
 }
 
 func (h *notesHandler) GetNotesList(c echo.Context) error {
-	qParams := c.QueryParams()
-
-	filters := map[string][]string(qParams)
+	tagParam := c.QueryParam("tag")
+	filters := map[string]string{"tag": tagParam}
 
 	notes, err := h.usecase.GetNotesList(filters)
 	if err != nil {

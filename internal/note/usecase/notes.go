@@ -48,7 +48,7 @@ func (uc *notesUseCase) GetNote(id int64) (*models.Note, error) {
 	return note, nil
 }
 
-func (uc *notesUseCase) GetNotesList(filters map[string][]string) ([]*models.Note, error) {
+func (uc *notesUseCase) GetNotesList(filters map[string]string) ([]*models.Note, error) {
 	notes, err := uc.repo.GetNotesList(filters)
 	if err != nil {
 		return nil, err

@@ -8,7 +8,7 @@ type (
 		EditNote(n *models.Note) error
 		DeleteNote(id int64) error
 		GetNote(id int64) (*models.Note, error)
-		GetNotesList(filters map[string][]string) ([]*models.Note, error)
+		GetNotesList(filters map[string]string) ([]*models.Note, error)
 	}
 
 	Repository interface {
@@ -16,6 +16,6 @@ type (
 		EditNote(u *models.Note) error
 		DeleteNote(id int64) error
 		GetNote(id int64) (*models.Note, error)
-		GetNotesList(filters map[string][]string) ([]*models.Note, error)
+		GetNotesList(filters map[string]string) ([]*models.Note, error)
 	}
 )

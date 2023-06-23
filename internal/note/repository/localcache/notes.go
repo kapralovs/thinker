@@ -2,7 +2,6 @@ package localcache
 
 import (
 	"errors"
-	"fmt"
 	"sync"
 
 	"github.com/kapralovs/thinker/internal/models"
@@ -68,7 +67,7 @@ func (r *LocalRepo) GetNote(id int64) (*models.Note, error) {
 	return nil, errors.New("заметка с данным ID не найдена")
 }
 
-func (r *LocalRepo) GetNotesList(filters map[string][]string) ([]*models.Note, error) {
+func (r *LocalRepo) GetNotesList(filters map[string]string) ([]*models.Note, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -88,26 +87,15 @@ func (r *LocalRepo) GetNotesList(filters map[string][]string) ([]*models.Note, e
 	return notesList, nil
 }
 
-func applyFilters(filters map[string][]string, note *models.Note) bool {
-	for fName, fValues := range filters {
-		switch fName {
-		case "tags":
-			for _, required := range fValues {
-				fmt.Println(required)
-				if !checkTag(required, note.Tags) {
-					return false
+func applyFilters(filters map[string]string, note *models.Note) bool {
+	for name, value := range filters {
+		switch name {
+		case "tag":
+			for _, tag := range note.Tags {
+				if tag == value {
+					return true
 				}
 			}
-		}
-	}
-
-	return true
-}
-
-func checkTag(required string, tags []string) bool {
-	for _, tag := range tags {
-		if tag == required {
-			return true
 		}
 	}
 
