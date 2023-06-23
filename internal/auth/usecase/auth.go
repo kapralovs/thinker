@@ -88,8 +88,8 @@ func (uc *authUseCase) ParseToken(tokenString string) error {
 	}
 
 	if claims, ok := tokenInfo.Claims.(*AuthClaims); ok && tokenInfo.Valid {
-		// fmt.Printf("%v %v\n", claims.User.Username, claims.ExpiresAt)
-		// fmt.Printf("%v %v\n", claims.User.Password, claims.ExpiresAt)
+		// fmt.Printf("%v %v\n", claims.User.Username, claims.ExpiresAt)	//For debug
+		// fmt.Printf("%v %v\n", claims.User.Password, claims.ExpiresAt)	//For debug
 
 		u, err := uc.repo.GetUser(claims.User.Username, claims.User.Password)
 		if err != nil {
