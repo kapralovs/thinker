@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -79,13 +78,13 @@ func (h *notesHandler) DeleteNote(c echo.Context) error {
 }
 
 func (h *notesHandler) GetNote(c echo.Context) error {
-	strID := c.Param("id")
-	if strID == "" {
-		errMsg := fmt.Sprintf("%s: empty path param: %s", utils.ResponseStatusError, "id")
-		return c.JSON(http.StatusBadRequest, errMsg)
-	}
+	// strID := c.Param("id")
+	// if strID == "" {
+	// 	errMsg := fmt.Sprintf("%s: empty path param: %s", utils.ResponseStatusError, "id")
+	// 	return c.JSON(http.StatusBadRequest, errMsg)
+	// }
 
-	id, err := strconv.Atoi(strID)
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		errMsg := fmt.Sprintf("%s: failed to parse %s path param: %s", utils.ResponseStatusError, "id", err.Error())
 		return c.JSON(http.StatusBadRequest, errMsg)
@@ -97,27 +96,18 @@ func (h *notesHandler) GetNote(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, errMsg)
 	}
 
-	serialized, err := json.Marshal(note)
-	if err != nil {
-		errMsg := fmt.Sprintf("%s: failed to marshal response: %s", utils.ResponseStatusError, err.Error())
-		return c.JSON(http.StatusInternalServerError, errMsg)
-	}
-
-	return c.JSON(http.StatusOK, string(serialized))
+	return c.JSON(http.StatusOK, note)
 }
 
 func (h *notesHandler) GetNotesList(c echo.Context) error {
-	notes, err := h.usecase.GetNotesList()
+	tagParam := c.QueryParam("tag")
+	filters := map[string]string{"tag": tagParam}
+
+	notes, err := h.usecase.GetNotesList(filters)
 	if err != nil {
 		errMsg := fmt.Sprintf("%s: failed to get a notes list: %s", utils.ResponseStatusError, err.Error())
 		return c.JSON(http.StatusInternalServerError, errMsg)
 	}
 
-	serialized, err := json.Marshal(notes)
-	if err != nil {
-		errMsg := fmt.Sprintf("%s: failed to marshal response: %s", utils.ResponseStatusError, err.Error())
-		return c.JSON(http.StatusInternalServerError, errMsg)
-	}
-
-	return c.JSON(http.StatusOK, string(serialized))
+	return c.JSON(http.StatusOK, notes)
 }

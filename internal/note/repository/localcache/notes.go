@@ -67,14 +67,37 @@ func (r *LocalRepo) GetNote(id int64) (*models.Note, error) {
 	return nil, errors.New("заметка с данным ID не найдена")
 }
 
-func (r *LocalRepo) GetNotesList() ([]*models.Note, error) {
+func (r *LocalRepo) GetNotesList(filters map[string]string) ([]*models.Note, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
-	notesList := make([]*models.Note, 0, len(r.notes))
+	notesList := make([]*models.Note, 0)
 	for _, note := range r.notes {
+		if len(filters) > 0 {
+			if applyFilters(filters, note) {
+				notesList = append(notesList, note)
+			}
+
+			continue
+		}
+
 		notesList = append(notesList, note)
 	}
 
 	return notesList, nil
+}
+
+func applyFilters(filters map[string]string, note *models.Note) bool {
+	for name, value := range filters {
+		switch name {
+		case "tag":
+			for _, tag := range note.Tags {
+				if tag == value {
+					return true
+				}
+			}
+		}
+	}
+
+	return false
 }
