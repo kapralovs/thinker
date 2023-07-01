@@ -56,7 +56,7 @@ func (r *LocalRepo) DeleteNote(id int64) error {
 	return nil
 }
 
-func (r *LocalRepo) GetNote(id int64) (*models.Note, error) {
+func (r *LocalRepo) GetNote(id int64, token *models.AuthClaims) (*models.Note, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 

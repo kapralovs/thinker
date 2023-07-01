@@ -16,19 +16,19 @@ type (
 		repo auth.Repository
 	}
 
-	AuthClaims struct {
-		jwt.StandardClaims
-		User *models.User `json:"user"`
-	}
+	/*
+		AuthClaims struct {
+			jwt.StandardClaims
+			User *models.User `json:"user"`
+		}
+	*/
 )
 
 func NewAuthUseCase(r auth.Repository) *authUseCase {
-	return &authUseCase{
-		repo: r,
-	}
+	return &authUseCase{repo: r}
 }
 
-func generateToken(a *AuthClaims, sString string) (string, error) {
+func generateToken(a *models.AuthClaims, sString string) (string, error) {
 	t := jwt.NewWithClaims(jwt.SigningMethodHS256, a)
 
 	return t.SignedString([]byte(sString))
@@ -40,7 +40,7 @@ func (uc *authUseCase) SignIn(username, password string) (string, error) {
 		return "", err
 	}
 
-	claims := &AuthClaims{
+	claims := &models.AuthClaims{
 		User: u,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: int64(time.Minute),
@@ -58,7 +58,7 @@ func (uc *authUseCase) SignIn(username, password string) (string, error) {
 func (uc *authUseCase) SignUp(username, password string) (string, error) {
 	var u = &models.User{Username: username, Password: password}
 
-	claims := &AuthClaims{
+	claims := &models.AuthClaims{
 		User: u,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: int64(time.Hour),
@@ -79,28 +79,29 @@ func (uc *authUseCase) SignUp(username, password string) (string, error) {
 	return token, nil
 }
 
-func (uc *authUseCase) ParseToken(tokenString string) error {
-	tokenInfo, err := jwt.ParseWithClaims(tokenString, &AuthClaims{}, func(token *jwt.Token) (interface{}, error) {
+func (uc *authUseCase) ParseToken(tokenString string) (*models.AuthClaims, error) {
+	tokenInfo, err := jwt.ParseWithClaims(tokenString, &models.AuthClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(os.Getenv("SIGN_STRING")), nil
 	})
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	if claims, ok := tokenInfo.Claims.(*AuthClaims); ok && tokenInfo.Valid {
+	claims, ok := tokenInfo.Claims.(*models.AuthClaims)
+	if ok && tokenInfo.Valid {
 		// fmt.Printf("%v %v\n", claims.User.Username, claims.ExpiresAt)	//For debug
 		// fmt.Printf("%v %v\n", claims.User.Password, claims.ExpiresAt)	//For debug
 
 		u, err := uc.repo.GetUser(claims.User.Username, claims.User.Password)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		if u.CurrentToken != tokenString {
 			// fmt.Printf("u.CurrentToken: %s\ntokenString: %s\n", u.CurrentToken, tokenString)
-			return errors.New("the token is expired")
+			return nil, errors.New("the token is expired")
 		}
 	}
 
-	return nil
+	return claims, nil
 }

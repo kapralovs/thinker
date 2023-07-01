@@ -11,6 +11,6 @@ type (
 	UseCase interface {
 		SignIn(username, password string) (string, error)
 		SignUp(username, password string) (string, error)
-		ParseToken(token string) error
+		ParseToken(token string) (*models.AuthClaims, error)
 	}
 )
