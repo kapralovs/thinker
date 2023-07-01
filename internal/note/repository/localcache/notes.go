@@ -34,7 +34,7 @@ func (r *LocalRepo) CreateNote(n *models.Note) error {
 	return nil
 }
 
-func (r *LocalRepo) EditNote(n *models.Note) error {
+func (r *LocalRepo) EditNote(n *models.Note, token *models.AuthClaims) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	_, ok := r.notes[n.ID]
@@ -47,7 +47,7 @@ func (r *LocalRepo) EditNote(n *models.Note) error {
 	return nil
 }
 
-func (r *LocalRepo) DeleteNote(id int64) error {
+func (r *LocalRepo) DeleteNote(id int64, token *models.AuthClaims) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
@@ -67,7 +67,7 @@ func (r *LocalRepo) GetNote(id int64, token *models.AuthClaims) (*models.Note, e
 	return nil, errors.New("заметка с данным ID не найдена")
 }
 
-func (r *LocalRepo) GetNotesList(filters map[string]string) ([]*models.Note, error) {
+func (r *LocalRepo) GetNotesList(filters map[string]string, token *models.AuthClaims) ([]*models.Note, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 
