@@ -17,6 +17,7 @@ import (
 	noteRepo "github.com/kapralovs/thinker/internal/note/repository/localcache"
 	noteUC "github.com/kapralovs/thinker/internal/note/usecase"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type app struct {
@@ -38,6 +39,10 @@ func NewApp() *app {
 func (a *app) Run(port string) error {
 	// Initialize router instance
 	router := echo.New()
+
+	router.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "method=${method}, uri=${uri}, status=${status}\n",
+	}))
 
 	// Set router groups
 	authGroup := router.Group("/auth/")
