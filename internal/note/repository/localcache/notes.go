@@ -73,6 +73,10 @@ func (r *LocalRepo) GetNotesList(filters map[string]string, token *models.AuthCl
 
 	notesList := make([]*models.Note, 0)
 	for _, note := range r.notes {
+		if note.UserID != token.User.ID {
+			continue
+		}
+
 		if len(filters) > 0 {
 			if applyFilters(filters, note) {
 				notesList = append(notesList, note)

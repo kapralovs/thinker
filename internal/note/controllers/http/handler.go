@@ -101,7 +101,11 @@ func (h *notesHandler) GetNote(c echo.Context) error {
 
 func (h *notesHandler) GetNotesList(c echo.Context) error {
 	tagParam := c.QueryParam("tag")
-	filters := map[string]string{"tag": tagParam}
+	filters := make(map[string]string, 0)
+
+	if tagParam != "" {
+		filters["tag"] = tagParam
+	}
 
 	token := c.Request().Context().Value("token").(*models.AuthClaims)
 
