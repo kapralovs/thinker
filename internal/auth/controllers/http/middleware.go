@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"context"
 	"log"
 	"net/http"
 
@@ -25,11 +26,19 @@ func (a *AuthMiddlewareHandler) AuthMiddleware(next echo.HandlerFunc) echo.Handl
 
 		token := authHeaderVal[len("Bearer "):]
 
-		if err := a.usecase.ParseToken(token); err != nil {
+		claims, err := a.usecase.ParseToken(token)
+		if err != nil {
 			log.Println(err.Error())
 			return c.JSON(http.StatusUnauthorized, "auth failed!")
 		}
 
+		//create new context with token
+		ctx := context.WithValue(c.Request().Context(), "token", claims)
+
+		//clone request with a new context
+		c.SetRequest(c.Request().Clone(ctx))
+
+		//call next handler
 		return next(c)
 	}
 }

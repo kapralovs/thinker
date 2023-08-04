@@ -32,7 +32,9 @@ func (h *notesHandler) CreateNote(c echo.Context) (err error) {
 		c.JSON(http.StatusBadRequest, "bad request")
 	}
 
-	if err = h.usecase.CreateNote(n); err != nil {
+	token := c.Request().Context().Value("token").(*models.AuthClaims)
+
+	if err = h.usecase.CreateNote(n, token); err != nil {
 		errMsg := fmt.Sprintf("%s: failed to create a new note: %s", utils.ResponseStatusError, err.Error())
 		return c.JSON(http.StatusInternalServerError, errMsg)
 	}
@@ -47,7 +49,9 @@ func (h *notesHandler) EditNote(c echo.Context) error {
 		c.JSON(http.StatusBadRequest, "bad request")
 	}
 
-	if err = h.usecase.EditNote(n); err != nil {
+	token := c.Request().Context().Value("token").(*models.AuthClaims)
+
+	if err = h.usecase.EditNote(n, token); err != nil {
 		errMsg := fmt.Sprintf("%s: failed to edit note: %s", utils.ResponseStatusError, err.Error())
 		return c.JSON(http.StatusInternalServerError, errMsg)
 	}
@@ -69,7 +73,9 @@ func (h *notesHandler) DeleteNote(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, errMsg)
 	}
 
-	if err = h.usecase.DeleteNote(int64(id)); err != nil {
+	token := c.Request().Context().Value("token").(*models.AuthClaims)
+
+	if err = h.usecase.DeleteNote(int64(id), token); err != nil {
 		errMsg := fmt.Sprintf("%s: failed to delete a note: %s", utils.ResponseStatusError, err.Error())
 		return c.JSON(http.StatusBadRequest, errMsg)
 	}
@@ -78,19 +84,15 @@ func (h *notesHandler) DeleteNote(c echo.Context) error {
 }
 
 func (h *notesHandler) GetNote(c echo.Context) error {
-	// strID := c.Param("id")
-	// if strID == "" {
-	// 	errMsg := fmt.Sprintf("%s: empty path param: %s", utils.ResponseStatusError, "id")
-	// 	return c.JSON(http.StatusBadRequest, errMsg)
-	// }
-
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		errMsg := fmt.Sprintf("%s: failed to parse %s path param: %s", utils.ResponseStatusError, "id", err.Error())
 		return c.JSON(http.StatusBadRequest, errMsg)
 	}
 
-	note, err := h.usecase.GetNote(int64(id))
+	token := c.Request().Context().Value("token").(*models.AuthClaims)
+
+	note, err := h.usecase.GetNote(int64(id), token)
 	if err != nil {
 		errMsg := fmt.Sprintf("%s: failed to get a note: %s", utils.ResponseStatusError, err.Error())
 		return c.JSON(http.StatusInternalServerError, errMsg)
@@ -101,9 +103,15 @@ func (h *notesHandler) GetNote(c echo.Context) error {
 
 func (h *notesHandler) GetNotesList(c echo.Context) error {
 	tagParam := c.QueryParam("tag")
-	filters := map[string]string{"tag": tagParam}
+	filters := make(map[string]string, 0)
 
-	notes, err := h.usecase.GetNotesList(filters)
+	if tagParam != "" {
+		filters["tag"] = tagParam
+	}
+
+	token := c.Request().Context().Value("token").(*models.AuthClaims)
+
+	notes, err := h.usecase.GetNotesList(filters, token)
 	if err != nil {
 		errMsg := fmt.Sprintf("%s: failed to get a notes list: %s", utils.ResponseStatusError, err.Error())
 		return c.JSON(http.StatusInternalServerError, errMsg)
