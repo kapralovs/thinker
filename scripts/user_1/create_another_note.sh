@@ -3,7 +3,6 @@ curl -X POST localhost:8080/note/create \
 -H 'Content-Type: application/json' \
 -d '
 {
-    "user_id":1,
     "title":"Another test title",
     "text":"Bye bye, cruel world!!!",
     "tags":["hello_world","test","fuck"]

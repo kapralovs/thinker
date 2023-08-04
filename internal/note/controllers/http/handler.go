@@ -32,7 +32,9 @@ func (h *notesHandler) CreateNote(c echo.Context) (err error) {
 		c.JSON(http.StatusBadRequest, "bad request")
 	}
 
-	if err = h.usecase.CreateNote(n); err != nil {
+	token := c.Request().Context().Value("token").(*models.AuthClaims)
+
+	if err = h.usecase.CreateNote(n, token); err != nil {
 		errMsg := fmt.Sprintf("%s: failed to create a new note: %s", utils.ResponseStatusError, err.Error())
 		return c.JSON(http.StatusInternalServerError, errMsg)
 	}

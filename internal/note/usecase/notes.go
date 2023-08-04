@@ -15,8 +15,8 @@ func NewNoteUseCase(r note.Repository) *notesUseCase {
 	}
 }
 
-func (uc *notesUseCase) CreateNote(n *models.Note) (err error) {
-	if err := uc.repo.CreateNote(n); err != nil {
+func (uc *notesUseCase) CreateNote(n *models.Note, token *models.AuthClaims) (err error) {
+	if err := uc.repo.CreateNote(n, token); err != nil {
 		return err
 	}
 
