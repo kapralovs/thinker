@@ -18,6 +18,7 @@ import (
 	noteUC "github.com/kapralovs/thinker/internal/note/usecase"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/natefinch/lumberjack"
 )
 
 type app struct {
@@ -40,8 +41,18 @@ func (a *app) Run(port string) error {
 	// Initialize router instance
 	router := echo.New()
 
+	// TODO: Temporary logger. Rewrite it!!!
+	lumberJackLogger := &lumberjack.Logger{
+		Filename:   "./thinker.log",
+		MaxSize:    10,
+		MaxBackups: 10,
+		MaxAge:     10,
+		Compress:   true,
+	}
+
 	router.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Format: "method=${method}, uri=${uri}, status=${status}\n",
+		// Format: "method=${method}, uri=${uri}, status=${status}\n",
+		Output: lumberJackLogger,
 	}))
 
 	// Set router groups
