@@ -39,8 +39,8 @@ func (r *LocalRepo) CreateNote(n *models.Note, token *models.AuthClaims) error {
 func (r *LocalRepo) EditNote(n *models.Note, token *models.AuthClaims) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	_, ok := r.notes[n.ID]
-	if !ok {
+
+	if _, ok := r.notes[n.ID]; !ok {
 		return errors.New("note with such id is not exists")
 	}
 

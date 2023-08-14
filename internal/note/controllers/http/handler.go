@@ -43,15 +43,22 @@ func (h *notesHandler) CreateNote(c echo.Context) (err error) {
 }
 
 func (h *notesHandler) EditNote(c echo.Context) error {
-	n := new(models.Note)
-	err := c.Bind(n)
-	if err != nil {
+	var n models.Note
+	if err := c.Bind(&n); err != nil {
 		c.JSON(http.StatusBadRequest, "bad request")
+	}
+
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, "wrong \"id\" param")
 	}
 
 	token := c.Request().Context().Value("token").(*models.AuthClaims)
 
-	if err = h.usecase.EditNote(n, token); err != nil {
+	n.ID = int64(id)
+	n.CreatedBy = token.User.Username
+
+	if err := h.usecase.EditNote(&n, token); err != nil {
 		errMsg := fmt.Sprintf("%s: failed to edit note: %s", utils.ResponseStatusError, err.Error())
 		return c.JSON(http.StatusInternalServerError, errMsg)
 	}
@@ -60,7 +67,7 @@ func (h *notesHandler) EditNote(c echo.Context) error {
 }
 
 func (h *notesHandler) DeleteNote(c echo.Context) error {
-	strID := c.Param(":id")
+	strID := c.Param("id")
 
 	if strID == "" {
 		errMsg := fmt.Sprintf("%s: empty path param: %s", utils.ResponseStatusError, "id")
