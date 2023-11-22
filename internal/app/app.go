@@ -43,7 +43,7 @@ func (a *app) Run(port string) error {
 
 	// TODO: Temporary logger. Rewrite it!!!
 	lumberJackLogger := &lumberjack.Logger{
-		Filename:   "./thinker.log",
+		Filename:   "./logs/thinker.log",
 		MaxSize:    10,
 		MaxBackups: 10,
 		MaxAge:     10,
