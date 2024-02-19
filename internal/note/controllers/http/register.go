@@ -8,9 +8,9 @@ import (
 func RegisterEndpoints(note *echo.Group, uc note.UseCase) {
 	h := NewNoteHandler(uc)
 
-	note.POST("create", h.CreateNote)
-	note.PUT("edit/:id", h.EditNote)
-	note.DELETE("delete/:id", h.DeleteNote)
-	note.GET(":id", h.GetNote)
-	note.GET("list", h.GetNotesList)
+	note.POST("create", h.createNote)
+	note.PUT("edit/:id", h.editNote)
+	note.DELETE("delete/:id", h.deleteNote)
+	note.GET(":id", h.getNote)
+	note.GET("list", h.getNotesList)
 }

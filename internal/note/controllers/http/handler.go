@@ -25,7 +25,7 @@ func NewNoteHandler(uc note.UseCase) *notesHandler {
 	}
 }
 
-func (h *notesHandler) CreateNote(c echo.Context) (err error) {
+func (h *notesHandler) createNote(c echo.Context) (err error) {
 	n := new(models.Note)
 
 	if err = c.Bind(n); err != nil {
@@ -42,7 +42,7 @@ func (h *notesHandler) CreateNote(c echo.Context) (err error) {
 	return c.JSON(http.StatusOK, utils.ResponseStatusCreated)
 }
 
-func (h *notesHandler) EditNote(c echo.Context) error {
+func (h *notesHandler) editNote(c echo.Context) error {
 	n := new(models.Note)
 	err := c.Bind(n)
 	if err != nil {
@@ -59,7 +59,7 @@ func (h *notesHandler) EditNote(c echo.Context) error {
 	return c.JSON(http.StatusCreated, utils.ResponseStatusEdited)
 }
 
-func (h *notesHandler) DeleteNote(c echo.Context) error {
+func (h *notesHandler) deleteNote(c echo.Context) error {
 	strID := c.Param(":id")
 
 	if strID == "" {
@@ -83,7 +83,7 @@ func (h *notesHandler) DeleteNote(c echo.Context) error {
 	return c.JSON(http.StatusOK, utils.ResponseStatusDeleted)
 }
 
-func (h *notesHandler) GetNote(c echo.Context) error {
+func (h *notesHandler) getNote(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		errMsg := fmt.Sprintf("%s: failed to parse %s path param: %s", utils.ResponseStatusError, "id", err.Error())
@@ -101,7 +101,7 @@ func (h *notesHandler) GetNote(c echo.Context) error {
 	return c.JSON(http.StatusOK, note)
 }
 
-func (h *notesHandler) GetNotesList(c echo.Context) error {
+func (h *notesHandler) getNotesList(c echo.Context) error {
 	tagParam := c.QueryParam("tag")
 	filters := make(map[string]string, 0)
 

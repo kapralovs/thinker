@@ -20,7 +20,7 @@ func NewUserHandler(uc user.UseCase) *UserHandler {
 	}
 }
 
-func (h *UserHandler) GetUser(c echo.Context) error {
+func (h *UserHandler) getUser(c echo.Context) error {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, fmt.Sprintf("can't get user: %s", err.Error()))
@@ -34,7 +34,7 @@ func (h *UserHandler) GetUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, u)
 }
 
-func (h *UserHandler) GetUsersList(c echo.Context) error {
+func (h *UserHandler) getUsersList(c echo.Context) error {
 	users, err := h.usecase.GetUsersList()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, fmt.Sprintf("can't get users list: %s", err.Error()))
@@ -43,7 +43,7 @@ func (h *UserHandler) GetUsersList(c echo.Context) error {
 	return c.JSON(http.StatusOK, users)
 }
 
-func (h *UserHandler) EditUser(c echo.Context) (err error) {
+func (h *UserHandler) editUser(c echo.Context) (err error) {
 	var u = new(models.User)
 
 	if err = c.Bind(u); err != nil {

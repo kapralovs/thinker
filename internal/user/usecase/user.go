@@ -20,6 +20,7 @@ func (uc *UserUseCase) GetUser(id int64) (*models.User, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return u, nil
 }
 
@@ -28,6 +29,7 @@ func (uc *UserUseCase) GetUsersList() ([]*models.User, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return u, nil
 }
 
@@ -36,5 +38,6 @@ func (uc *UserUseCase) EditUser(u *models.User) error {
 	if err != nil {
 		return err
 	}
+
 	return nil
 }

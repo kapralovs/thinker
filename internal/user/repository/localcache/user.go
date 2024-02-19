@@ -38,6 +38,7 @@ func (r *UserLocalRepo) GetUsersList() ([]*models.User, error) {
 	for _, u := range r.users {
 		usersList = append(usersList, u)
 	}
+
 	return usersList, nil
 }
 
@@ -48,6 +49,7 @@ func (r *UserLocalRepo) EditUser(u *models.User) error {
 	if _, ok := r.users[u.ID]; ok {
 		r.users[u.ID] = u
 	}
+
 	return errors.New("user is not exist")
 }
 

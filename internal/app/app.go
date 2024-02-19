@@ -69,7 +69,7 @@ func (a *app) Run(port string) error {
 		Handler:        router,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,
-		MaxHeaderBytes: 1 << 20,
+		MaxHeaderBytes: 1 << 20, // 1MB (RFC 2616)
 	}
 
 	// Launch HTTP server into separate goroutine
