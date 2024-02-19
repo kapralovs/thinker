@@ -12,10 +12,10 @@ type (
 		usecase auth.UseCase
 	}
 
-	signInRequestBody struct {
-		Username string `json:"username,omitempty"`
-		Password string `json:"password,omitempty"`
-	}
+	// signInRequestBody struct {
+	// 	Username string `json:"username,omitempty"`
+	// 	Password string `json:"password,omitempty"`
+	// }
 
 	signUpRequestBody struct {
 		Username string `json:"username,omitempty"`
@@ -33,7 +33,7 @@ func NewAuthHandler(uc auth.UseCase) *AuthHandler {
 	return &AuthHandler{usecase: uc}
 }
 
-func (h *AuthHandler) SignIn(c echo.Context) error {
+func (h *AuthHandler) signIn(c echo.Context) error {
 	authInfo := new(AuthInfo)
 
 	if err := c.Bind(authInfo); err != nil {
@@ -50,7 +50,7 @@ func (h *AuthHandler) SignIn(c echo.Context) error {
 	return c.JSON(http.StatusOK, authResp)
 }
 
-func (h *AuthHandler) SignUp(c echo.Context) error {
+func (h *AuthHandler) signUp(c echo.Context) error {
 	signUpReq := new(signUpRequestBody)
 
 	if err := c.Bind(signUpReq); err != nil {
