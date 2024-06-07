@@ -93,5 +93,6 @@ func (a *app) Run(port string) error {
 	ctx, shutdown := context.WithTimeout(context.Background(), 5*time.Second)
 	defer shutdown()
 
+	// Shutdown HTTP server with timeout
 	return a.httpServer.Shutdown(ctx)
 }
