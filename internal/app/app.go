@@ -9,13 +9,14 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/kapralovs/thinker/internal/auth"
 	authhttp "github.com/kapralovs/thinker/internal/auth/controllers/http"
-	authRepo "github.com/kapralovs/thinker/internal/auth/repository/localcache"
+	authpg "github.com/kapralovs/thinker/internal/auth/repository/postgres"
 	authUC "github.com/kapralovs/thinker/internal/auth/usecase"
 	"github.com/kapralovs/thinker/internal/note"
 	notehttp "github.com/kapralovs/thinker/internal/note/controllers/http"
-	noteRepo "github.com/kapralovs/thinker/internal/note/repository/localcache"
+	notepg "github.com/kapralovs/thinker/internal/note/repository/postgres"
 	noteUC "github.com/kapralovs/thinker/internal/note/usecase"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -29,11 +30,16 @@ type app struct {
 }
 
 func NewApp() *app {
-	nRepo := noteRepo.NewLocalRepo()
-	authRepo := authRepo.NewLocalRepo()
+	db := initDB()
+
+	// nRepo := noteRepo.NewLocalRepo()
+	// authRepo := authRepo.NewLocalRepo()
+
+	noteRepo := notepg.NewNoteRepo(db)
+	authRepo := authpg.NewAuthRepo(db)
 
 	return &app{
-		noteUseCase: noteUC.NewNoteUseCase(nRepo),
+		noteUseCase: noteUC.NewNoteUseCase(noteRepo),
 		authUseCase: authUC.NewAuthUseCase(authRepo),
 	}
 }
@@ -96,4 +102,13 @@ func (a *app) Run(port string) error {
 
 	// Shutdown HTTP server with timeout
 	return a.httpServer.Shutdown(ctx)
+}
+
+func initDB() *pgxpool.Pool {
+	pool, err := pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return pool
 }
