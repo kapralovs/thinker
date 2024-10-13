@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/kapralovs/thinker/internal/auth"
@@ -83,8 +84,8 @@ func (a *app) Run(port string) error {
 	// Make channel of os.Signals with cap=1
 	quit := make(chan os.Signal, 1)
 
-	// Handle os.Interrupt
-	signal.Notify(quit, os.Interrupt, os.Interrupt)
+	// Handle os.Interrupt, syscall.SIGTERM signals
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 
 	// Locked until the first element (signal) is passed to the channel
 	<-quit
