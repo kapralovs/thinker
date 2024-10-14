@@ -94,16 +94,16 @@ func (r *LocalRepo) GetNotesList(filters map[string]string, token *models.AuthCl
 }
 
 func applyFilters(filters map[string]string, note *models.Note) bool {
-	for name, value := range filters {
-		switch name {
-		case "tag":
-			for _, tag := range note.Tags {
-				if tag == value {
-					return true
-				}
-			}
-		}
-	}
+	// for name, value := range filters {
+	// 	switch name {
+	// 	case "tag":
+	// 		for _, tag := range note.Tags {
+	// 			if tag == value {
+	// 				return true
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	return false
 }
