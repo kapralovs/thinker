@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -31,9 +32,6 @@ type app struct {
 
 func NewApp() *app {
 	db := initDB()
-
-	// nRepo := noteRepo.NewLocalRepo()
-	// authRepo := authRepo.NewLocalRepo()
 
 	noteRepo := notepg.NewNoteRepo(db)
 	authRepo := authpg.NewAuthRepo(db)
@@ -105,8 +103,19 @@ func (a *app) Run(port string) error {
 }
 
 func initDB() *pgxpool.Pool {
-	pool, err := pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
+	pgxconfig, err := pgxpool.ParseConfig(os.Getenv("DATABASE_URL"))
 	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(pgxconfig.ConnConfig)
+
+	pool, err := pgxpool.NewWithConfig(context.Background(), pgxconfig)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err = pool.Ping(context.Background()); err != nil {
 		log.Fatal(err)
 	}
 
