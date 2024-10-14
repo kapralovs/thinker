@@ -1,0 +1,16 @@
+CREATE DATABASE thinker;
+
+CREATE TABLE users (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(50) NOT NULL,
+    current_token VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE notes (
+    id BIGSERIAL PRIMARY KEY,
+    created_by VARCHAR(50) NOT NULL,
+    title VARCHAR(50) NOT NULL,
+    text TEXT NOT NULL
+);
