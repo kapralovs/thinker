@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -108,16 +107,14 @@ func initDB() *pgxpool.Pool {
 		log.Fatal(err)
 	}
 
-	fmt.Println(pgxconfig.ConnConfig)
-
 	pool, err := pgxpool.NewWithConfig(context.Background(), pgxconfig)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if err = pool.Ping(context.Background()); err != nil {
-		log.Fatal(err)
-	}
+	// if err = pool.Ping(context.Background()); err != nil {
+	// 	log.Fatal(err)
+	// }
 
 	return pool
 }
