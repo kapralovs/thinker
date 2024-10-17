@@ -5,7 +5,7 @@ CREATE TABLE users (
     name VARCHAR(50) NOT NULL,
     username VARCHAR(50) UNIQUE NOT NULL,
     password VARCHAR(50) NOT NULL,
-    current_token VARCHAR(50) UNIQUE NOT NULL
+    current_token VARCHAR UNIQUE NOT NULL
 );
 
 CREATE TABLE notes (
