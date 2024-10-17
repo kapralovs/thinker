@@ -9,15 +9,15 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type AuthMiddlewareHandler struct {
+type authMiddlewareHandler struct {
 	usecase auth.UseCase
 }
 
 func NewAuthMiddlewareHandler(uc auth.UseCase) func(next echo.HandlerFunc) echo.HandlerFunc {
-	return (&AuthMiddlewareHandler{usecase: uc}).AuthMiddleware
+	return (&authMiddlewareHandler{usecase: uc}).AuthMiddleware
 }
 
-func (a *AuthMiddlewareHandler) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+func (a *authMiddlewareHandler) AuthMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		authHeaderVal := c.Request().Header.Get("Authorization")
 		if authHeaderVal == "" {

@@ -8,14 +8,9 @@ import (
 )
 
 type (
-	AuthHandler struct {
+	authHandler struct {
 		usecase auth.UseCase
 	}
-
-	// signInRequestBody struct {
-	// 	Username string `json:"username,omitempty"`
-	// 	Password string `json:"password,omitempty"`
-	// }
 
 	signUpRequestBody struct {
 		Username string `json:"username,omitempty"`
@@ -29,11 +24,11 @@ type (
 	}
 )
 
-func NewAuthHandler(uc auth.UseCase) *AuthHandler {
-	return &AuthHandler{usecase: uc}
+func NewAuthHandler(uc auth.UseCase) *authHandler {
+	return &authHandler{usecase: uc}
 }
 
-func (h *AuthHandler) signIn(c echo.Context) error {
+func (h *authHandler) signIn(c echo.Context) error {
 	authInfo := new(AuthInfo)
 
 	if err := c.Bind(authInfo); err != nil {
@@ -42,7 +37,7 @@ func (h *AuthHandler) signIn(c echo.Context) error {
 
 	token, err := h.usecase.SignIn(authInfo.Login, authInfo.Password)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, "can't sign in")
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
 	authResp := &AuthResponse{Token: token, Success: true}
@@ -50,7 +45,7 @@ func (h *AuthHandler) signIn(c echo.Context) error {
 	return c.JSON(http.StatusOK, authResp)
 }
 
-func (h *AuthHandler) signUp(c echo.Context) error {
+func (h *authHandler) signUp(c echo.Context) error {
 	signUpReq := new(signUpRequestBody)
 
 	if err := c.Bind(signUpReq); err != nil {
@@ -59,7 +54,7 @@ func (h *AuthHandler) signUp(c echo.Context) error {
 
 	token, err := h.usecase.SignUp(signUpReq.Username, signUpReq.Password)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, "sign up error")
+		return c.JSON(http.StatusInternalServerError, err.Error())
 	}
 
 	authResp := &AuthResponse{Token: token, Success: true}

@@ -48,7 +48,7 @@ func (uc *notesUseCase) GetNote(id int64, token *models.AuthClaims) (*models.Not
 	return note, nil
 }
 
-func (uc *notesUseCase) GetNotesList(filters map[string]string, token *models.AuthClaims) ([]*models.Note, error) {
+func (uc *notesUseCase) GetNotesList(filters map[string]string, token *models.AuthClaims) ([]models.Note, error) {
 	notes, err := uc.repo.GetNotesList(filters, token)
 	if err != nil {
 		return nil, err

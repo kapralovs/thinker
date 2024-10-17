@@ -5,7 +5,8 @@ import "github.com/kapralovs/thinker/internal/models"
 type (
 	Repository interface {
 		GetUser(username, password string) (*models.User, error)
-		CreateUser(user *models.User) error
+		UpdateUser(u *models.User) error
+		CreateUser(u *models.User) error
 	}
 
 	UseCase interface {

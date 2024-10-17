@@ -12,17 +12,12 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// type NewNote struct {
-// }
-
 type notesHandler struct {
 	usecase note.UseCase
 }
 
 func NewNoteHandler(uc note.UseCase) *notesHandler {
-	return &notesHandler{
-		usecase: uc,
-	}
+	return &notesHandler{usecase: uc}
 }
 
 func (h *notesHandler) createNote(c echo.Context) (err error) {
@@ -42,10 +37,10 @@ func (h *notesHandler) createNote(c echo.Context) (err error) {
 	return c.JSON(http.StatusOK, utils.ResponseStatusCreated)
 }
 
-func (h *notesHandler) editNote(c echo.Context) error {
+func (h *notesHandler) editNote(c echo.Context) (err error) {
 	n := new(models.Note)
-	err := c.Bind(n)
-	if err != nil {
+
+	if err = c.Bind(n); err != nil {
 		c.JSON(http.StatusBadRequest, "bad request")
 	}
 
@@ -60,14 +55,14 @@ func (h *notesHandler) editNote(c echo.Context) error {
 }
 
 func (h *notesHandler) deleteNote(c echo.Context) error {
-	strID := c.Param(":id")
+	idParam := c.Param(":id")
 
-	if strID == "" {
+	if idParam == "" {
 		errMsg := fmt.Sprintf("%s: empty path param: %s", utils.ResponseStatusError, "id")
 		return c.JSON(http.StatusBadRequest, errMsg)
 	}
 
-	id, err := strconv.Atoi(strID)
+	id, err := strconv.Atoi(idParam)
 	if err != nil {
 		errMsg := fmt.Sprintf("%s: failed to parse %s path param: %s", utils.ResponseStatusError, "id", err.Error())
 		return c.JSON(http.StatusBadRequest, errMsg)

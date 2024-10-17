@@ -15,13 +15,6 @@ type (
 	authUseCase struct {
 		repo auth.Repository
 	}
-
-	/*
-		AuthClaims struct {
-			jwt.StandardClaims
-			User *models.User `json:"user"`
-		}
-	*/
 )
 
 func NewAuthUseCase(r auth.Repository) *authUseCase {
@@ -52,11 +45,17 @@ func (uc *authUseCase) SignIn(username, password string) (string, error) {
 		return "", err
 	}
 
+	u.CurrentToken = token
+
+	if err = uc.repo.UpdateUser(u); err != nil {
+		return "", err
+	}
+
 	return token, nil
 }
 
 func (uc *authUseCase) SignUp(username, password string) (string, error) {
-	var u = &models.User{Username: username, Password: password}
+	u := &models.User{Username: username, Password: password}
 
 	claims := &models.AuthClaims{
 		User: u,
@@ -72,7 +71,7 @@ func (uc *authUseCase) SignUp(username, password string) (string, error) {
 
 	u.CurrentToken = token
 
-	if err := uc.repo.CreateUser(u); err != nil {
+	if err = uc.repo.CreateUser(u); err != nil {
 		return "", fmt.Errorf("%s: %s", "can't create user", err.Error())
 	}
 
@@ -80,25 +79,22 @@ func (uc *authUseCase) SignUp(username, password string) (string, error) {
 }
 
 func (uc *authUseCase) ParseToken(tokenString string) (*models.AuthClaims, error) {
-	tokenInfo, err := jwt.ParseWithClaims(tokenString, &models.AuthClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("SIGN_STRING")), nil
-	})
+	tokenInfo, err := jwt.ParseWithClaims(tokenString, &models.AuthClaims{},
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte(os.Getenv("SIGN_STRING")), nil
+		})
 	if err != nil {
 		return nil, err
 	}
 
 	claims, ok := tokenInfo.Claims.(*models.AuthClaims)
 	if ok && tokenInfo.Valid {
-		// fmt.Printf("%v %v\n", claims.User.Username, claims.ExpiresAt)	//For debug
-		// fmt.Printf("%v %v\n", claims.User.Password, claims.ExpiresAt)	//For debug
-
 		u, err := uc.repo.GetUser(claims.User.Username, claims.User.Password)
 		if err != nil {
 			return nil, err
 		}
 
 		if u.CurrentToken != tokenString {
-			// fmt.Printf("u.CurrentToken: %s\ntokenString: %s\n", u.CurrentToken, tokenString)
 			return nil, errors.New("the token is expired")
 		}
 	}
