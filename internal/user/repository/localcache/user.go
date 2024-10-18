@@ -12,7 +12,7 @@ type userLocalRepo struct {
 	users map[int64]models.User
 }
 
-func NewuserLocalRepo() *userLocalRepo {
+func NewUserLocalRepo() *userLocalRepo {
 	return &userLocalRepo{
 		mu:    new(sync.Mutex),
 		users: make(map[int64]models.User),
